@@ -1,0 +1,44 @@
+Emacs dynamic module providing ODBC interface
+
+* Compiling
+
+#+begin_src shell
+mkdir build
+cmake ..
+make
+#+end_src
+
+* Using
+** Set up ODBC
+In =/etc/odbcinst.ini=:
+#+begin_example
+[MariaDB]
+Description = ODBC Driver for MariaDB
+Driver      = /usr/lib/x86_64-linux-gnu/odbc/libmaodbc.so
+FileUsage   = 1
+#+end_example
+
+In =~/.odbc.ini=:
+#+begin_example
+[MariaDB-test]
+Driver      = MariaDB
+Database    = test
+Socket      = /run/mysqld/mysqld.sock
+Server      = 127.0.0.1
+Port        = 3306
+#+end_example
+
+*** Set up MariaDB
+#+begin_src shell
+sudo mariadb -u root -p
+MariaDB> CREATE DATABASE test;
+MariaDB> CREATE USER 'tassos'@'localhost' IDENTIFIED BY '123';
+MariaDB> GRANT ALL PRIVILEGES ON test.* TO 'tassos'@'localhost';
+MariaDB> quit
+#+end_src
+
+** Configuring in Emacs
+#+begin_src emacs-lisp
+(use-package emacs-odbc
+  :load-path "/home/tassos/software/emacs-odbc")
+#+end_src
